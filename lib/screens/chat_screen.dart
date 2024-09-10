@@ -22,7 +22,7 @@ class ChatScreen extends StatelessWidget {
             flex: 4,
             child: Column(
               children: [
-                ChatAnswer(),
+                const ChatAnswer(), // Burada dinlemeyi ayrı bir widget'ta yapıyoruz
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Obx(
@@ -30,10 +30,21 @@ class ChatScreen extends StatelessWidget {
                       children: [
                         Expanded(
                           child: TextField(
-                              decoration: const InputDecoration(labelText: 'Type a message'),
-                              controller: _chatSession.message.value),
+                            decoration: const InputDecoration(labelText: 'Type a message'),
+                            controller: _chatSession.message.value,
+                            onChanged: (value) {
+                              _chatSession.message.refresh(); // TextField girdisini dinlemek için refresh
+                            },
+                          ),
                         ),
-                        IconButton(icon: const Icon(Icons.send), onPressed: () => ChatRepository().sendMessage()),
+                        IconButton(
+                          icon: const Icon(Icons.send),
+                          onPressed: () {
+                            ChatRepository().sendMessage();
+                            _chatSession.message.refresh(); // Mesaj gönderiminden sonra yenile
+                            _chatSession.answer.refresh(); // Cevap kısmını da yenile
+                          },
+                        ),
                       ],
                     ),
                   ),
@@ -48,23 +59,35 @@ class ChatScreen extends StatelessWidget {
 }
 
 class ChatAnswer extends StatelessWidget {
-  const ChatAnswer({
-    super.key,
-  });
+  const ChatAnswer({super.key});
 
   @override
   Widget build(BuildContext context) {
     final _chatSession = Get.put(ChatSession());
+    if (_chatSession.message.value.text.isEmpty) {
+      return const Expanded(
+        child: Center(
+          child: Text('No message'),
+        ),
+      );
+    }
     return Expanded(
       child: Obx(() => Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              ListTile(
-                title: Text('Quesstion'),
-                subtitle: Text(_chatSession.message.value.text),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
+                child: ListTile(
+                  title: const Text('Chatbot'),
+                  subtitle: SelectableText('Answered at ${_chatSession.message.value.text}'),
+                ),
               ),
-              ListTile(
-                title: Text('Answer'),
-                subtitle: Text(_chatSession.answer.value.text),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 0, 0, 0),
+                child: ListTile(
+                  title: const Text('Chatbot'),
+                  subtitle: SelectableText('Answered at ${_chatSession.answer.value.text}'),
+                ),
               ),
             ],
           )),
