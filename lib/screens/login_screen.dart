@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
@@ -32,17 +34,19 @@ class _LoginScreenState extends State<LoginScreen> {
     final token = await _authRepository.login(username, password);
     setState(() {
       _token = token;
-      print('Token: $_token');
+      //debugPrint('Token: $_token');
       _isLoading = false;
       AppSession.token = token;
-      Get.off(() => ChatScreen());
+      Get.toNamed('/chat');
     });
   }
 
   Future<void> _loadUserInformation() async {
     UserInfo userInformation = await _authRepository.getAccount();
-    AppSession.username = userInformation.preferredUsername;
-    print('User Information: $userInformation');
+    setState(() {
+      AppSession.username = userInformation.username;
+    });
+    debugPrint('User Information: ${userInformation.toJson()}');
   }
 
   @override
@@ -67,7 +71,9 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             SizedBox(height: 20),
             ElevatedButton(
-              onPressed: _login,
+              onPressed: () {
+                _login().then((value) => _loadUserInformation());
+              },
               child: Text('Login'),
             ),
             if (_token != null) ...[

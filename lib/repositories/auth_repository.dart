@@ -1,3 +1,6 @@
+import 'package:dnext_chatbot_3/constants/app_session.dart';
+import 'package:dnext_chatbot_3/models/user_info.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -47,11 +50,18 @@ class AuthRepository {
   }
 
   /// Load current user account from keycloak API
-  getAccount() {
+  getAccount() async {
+    final response = await http.get(Uri.parse('$baseUrl/realms/$realm/account/?userProfileMetadata=true'), headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ${AppSession.token}',
+    });
 
-    // final response = http.get(
-    //   Uri.parse('$baseUrl/realms/$realm/account'),
-    //   headers: {'Authorization', 'Bearer $token'}
-
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      return UserInfo.fromJson(data);
+    } else {
+      debugPrint('Failed to load user information: ${response.statusCode}');
+      return null;
+    }
   }
 }
