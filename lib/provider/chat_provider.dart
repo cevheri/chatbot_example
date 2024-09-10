@@ -23,6 +23,7 @@ class ChatProvider extends ChangeNotifier {
       notifyListeners();
     } catch (e) {
       debugPrint('Failed to fetch chat history: $e');
+      throw Exception('Failed to load chat history: $e');
     }
   }
 

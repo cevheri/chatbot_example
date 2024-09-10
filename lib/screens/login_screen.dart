@@ -46,7 +46,7 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() {
       AppSession.username = userInformation.username;
     });
-    debugPrint('User Information: ${userInformation.toJson()}');
+    debugPrint('User Information: ${userInformation.username}');
   }
 
   @override

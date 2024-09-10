@@ -24,18 +24,32 @@ class ChatScreen extends StatelessWidget {
               child: Column(
                 children: [
                   Expanded(
-                    child: chatProvider.chatHistory.isEmpty
-                        ? Center(child: Text('No chat history available', style: TextStyle(color: Colors.grey)))
-                        : ListView.builder(
-                            itemCount: chatProvider.chatHistory.length,
-                            itemBuilder: (context, index) {
-                              ChatMessage message = chatProvider.chatHistory[index];
-                              return ListTile(
-                                title: Text(message.title),
-                                subtitle: Text(message.message),
-                              );
-                            },
-                          ),
+                    child: FutureBuilder<void>(
+                      future: chatProvider.fetchChatHistory(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          debugPrint("Waiting for chat history");
+                          return Center(child: CircularProgressIndicator());
+                        } else if (snapshot.hasError) {
+                          debugPrint("Error: ${snapshot.error}");
+                          return Center(child: Text('Error: ${snapshot.error}'));
+                        } else {
+                          debugPrint("Chat history loaded");
+                          return chatProvider.chatHistory.isEmpty
+                              ? Center(child: Text('No chat history available', style: TextStyle(color: Colors.grey)))
+                              : ListView.builder(
+                                  itemCount: chatProvider.chatHistory.length,
+                                  itemBuilder: (context, index) {
+                                    ChatMessage message = chatProvider.chatHistory[index];
+                                    return ListTile(
+                                      title: Text(message.sender),
+                                      subtitle: Text(message.message),
+                                    );
+                                  },
+                                );
+                        }
+                      },
+                    ),
                   ),
                 ],
               ),
