@@ -10,7 +10,6 @@ class ChatScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final _chatSession = Get.put(ChatSession());
-    _chatSession.message.value.text = '';
 
     return Scaffold(
       appBar: AppBar(
@@ -23,14 +22,7 @@ class ChatScreen extends StatelessWidget {
             flex: 4,
             child: Column(
               children: [
-                Expanded(
-                  child: Container(
-                    color: Colors.white,
-                    child: const Center(
-                      child: Text('Chat messages will appear here'),
-                    ),
-                  ),
-                ),
+                ChatAnswer(),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Obx(
@@ -51,6 +43,31 @@ class ChatScreen extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class ChatAnswer extends StatelessWidget {
+  const ChatAnswer({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final _chatSession = Get.put(ChatSession());
+    return Expanded(
+      child: Obx(() => Column(
+            children: [
+              ListTile(
+                title: Text('Quesstion'),
+                subtitle: Text(_chatSession.message.value.text),
+              ),
+              ListTile(
+                title: Text('Answer'),
+                subtitle: Text(_chatSession.answer.value.text),
+              ),
+            ],
+          )),
     );
   }
 }

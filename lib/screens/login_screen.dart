@@ -30,21 +30,16 @@ class _LoginScreenState extends State<LoginScreen> {
     _isLoading = true;
     final username = _usernameController.text;
     final password = _passwordController.text;
-
     final token = await _authRepository.login(username, password);
-    setState(() {
-      _token = token;
-      _isLoading = false;
-      AppSession.token = token;
-      Get.toNamed('/chat');
-    });
+    _token = token;
+    _isLoading = false;
+    AppSession.token = token;
+    Get.toNamed('/chat');
   }
 
   Future<void> _loadUserInformation() async {
     UserInfo userInformation = await _authRepository.getAccount();
-    setState(() {
-      AppSession.userInfo = userInformation;
-    });
+    AppSession.userInfo = userInformation;
     debugPrint('User Information: ${userInformation.username}');
   }
 

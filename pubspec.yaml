@@ -13,6 +13,7 @@ dependencies:
   http:
   equatable:
   get:
+  faker: ^2.2.0
 
 dev_dependencies:
   flutter_test:
