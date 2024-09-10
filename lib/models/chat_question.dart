@@ -1,18 +1,18 @@
-class ChatMessage {
+class ChatQuestion {
   final String title;
   final String message;
   final String sender;
   final DateTime time;
 
-  ChatMessage({
+  ChatQuestion({
     required this.title,
     required this.message,
     required this.sender,
     required this.time,
   });
 
-  factory ChatMessage.fromJson(Map<String, dynamic> json) {
-    return ChatMessage(
+  factory ChatQuestion.fromJson(Map<String, dynamic> json) {
+    return ChatQuestion(
       title: json['title'],
       message: json['message'],
       sender: json['sender'],

@@ -34,7 +34,6 @@ class _LoginScreenState extends State<LoginScreen> {
     final token = await _authRepository.login(username, password);
     setState(() {
       _token = token;
-      //debugPrint('Token: $_token');
       _isLoading = false;
       AppSession.token = token;
       Get.toNamed('/chat');
@@ -44,9 +43,16 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> _loadUserInformation() async {
     UserInfo userInformation = await _authRepository.getAccount();
     setState(() {
-      AppSession.username = userInformation.username;
+      AppSession.userInfo = userInformation;
     });
     debugPrint('User Information: ${userInformation.username}');
+  }
+
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _passwordController.dispose();
+    super.dispose();
   }
 
   @override
@@ -75,11 +81,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 _login().then((value) => _loadUserInformation());
               },
               child: Text('Login'),
-            ),
-            if (_token != null) ...[
-              SizedBox(height: 20),
-              Text('Token: $_token'),
-            ]
+            )
           ],
         ),
       ),

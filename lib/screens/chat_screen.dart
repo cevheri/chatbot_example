@@ -1,61 +1,24 @@
-import 'package:dnext_chatbot_3/models/chat_message.dart';
-import 'package:dnext_chatbot_3/provider/chat_provider.dart';
+import 'package:dnext_chatbot_3/constants/chat_session.dart';
+import 'package:dnext_chatbot_3/repositories/chat_repository.dart';
+import 'package:dnext_chatbot_3/widgets/chat_history_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:get/get.dart';
 
 class ChatScreen extends StatelessWidget {
   const ChatScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final chatProvider = Provider.of<ChatProvider>(context);
+    final _chatSession = Get.put(ChatSession());
+    _chatSession.message.value.text = '';
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Chat Screen'),
+        title: const Text('Chat Screen'),
       ),
       body: Row(
         children: [
-          // Sol panel - Chat History
-          Expanded(
-            flex: 2,
-            child: Container(
-              color: Colors.grey[200],
-              child: Column(
-                children: [
-                  Expanded(
-                    child: FutureBuilder<void>(
-                      future: chatProvider.fetchChatHistory(),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
-                          debugPrint("Waiting for chat history");
-                          return Center(child: CircularProgressIndicator());
-                        } else if (snapshot.hasError) {
-                          debugPrint("Error: ${snapshot.error}");
-                          return Center(child: Text('Error: ${snapshot.error}'));
-                        } else {
-                          debugPrint("Chat history loaded");
-                          return chatProvider.chatHistory.isEmpty
-                              ? Center(child: Text('No chat history available', style: TextStyle(color: Colors.grey)))
-                              : ListView.builder(
-                                  itemCount: chatProvider.chatHistory.length,
-                                  itemBuilder: (context, index) {
-                                    ChatMessage message = chatProvider.chatHistory[index];
-                                    return ListTile(
-                                      title: Text(message.sender),
-                                      subtitle: Text(message.message),
-                                    );
-                                  },
-                                );
-                        }
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          // Sağ panel - Chat message gönderme ekranı
+          ChatHistoryWidget(),
           Expanded(
             flex: 4,
             child: Column(
@@ -63,34 +26,24 @@ class ChatScreen extends StatelessWidget {
                 Expanded(
                   child: Container(
                     color: Colors.white,
-                    child: Center(
+                    child: const Center(
                       child: Text('Chat messages will appear here'),
                     ),
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          decoration: InputDecoration(
-                            hintText: 'Type your message...',
-                            border: OutlineInputBorder(),
-                          ),
-                          onChanged: (text) {
-                            chatProvider.updateCurrentMessage(text);
-                          },
-                          controller: TextEditingController(text: chatProvider.currentMessage),
+                  child: Obx(
+                    () => Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                              decoration: const InputDecoration(labelText: 'Type a message'),
+                              controller: _chatSession.message.value),
                         ),
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.send),
-                        onPressed: () {
-                          chatProvider.sendMessage();
-                        },
-                      ),
-                    ],
+                        IconButton(icon: const Icon(Icons.send), onPressed: () => ChatRepository().sendMessage()),
+                      ],
+                    ),
                   ),
                 ),
               ],
