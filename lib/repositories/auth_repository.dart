@@ -45,4 +45,13 @@ class AuthRepository {
       return null;
     }
   }
+
+  /// Load current user account from keycloak API
+  getAccount() {
+
+    // final response = http.get(
+    //   Uri.parse('$baseUrl/realms/$realm/account'),
+    //   headers: {'Authorization', 'Bearer $token'}
+
+  }
 }

@@ -1,16 +1,15 @@
+import 'package:dnext_chatbot_3/models/chat_message.dart';
+import 'package:dnext_chatbot_3/provider/chat_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 
 class ChatScreen extends StatelessWidget {
-  final String token;
-
-  ChatScreen({required this.token});
-
-  // Simulated chat history list
-  final List<String> chatHistory = []; // Şu anda boş, dolu olduğunda güncelleyebilirsiniz
+  const ChatScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final chatProvider = Provider.of<ChatProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Chat Screen'),
@@ -25,25 +24,18 @@ class ChatScreen extends StatelessWidget {
               child: Column(
                 children: [
                   Expanded(
-                    child: chatHistory.isEmpty
-                        ? Center(
-                      child: Text(
-                        'No chat history available',
-                        style: TextStyle(color: Colors.grey),
-                      ),
-                    )
+                    child: chatProvider.chatHistory.isEmpty
+                        ? Center(child: Text('No chat history available', style: TextStyle(color: Colors.grey)))
                         : ListView.builder(
-                      itemCount: chatHistory.length,
-                      itemBuilder: (context, index) {
-                        return ListTile(
-                          title: Text(chatHistory[index]),
-                          onTap: () {
-                            // Chat'i seçince olacak işlemler
-                            print('Chat ${chatHistory[index]} selected');
-                          },
-                        );
-                      },
-                    ),
+                            itemCount: chatProvider.chatHistory.length,
+                            itemBuilder: (context, index) {
+                              ChatMessage message = chatProvider.chatHistory[index];
+                              return ListTile(
+                                title: Text(message.title),
+                                subtitle: Text(message.message),
+                              );
+                            },
+                          ),
                   ),
                 ],
               ),
@@ -72,13 +64,16 @@ class ChatScreen extends StatelessWidget {
                             hintText: 'Type your message...',
                             border: OutlineInputBorder(),
                           ),
+                          onChanged: (text) {
+                            chatProvider.updateCurrentMessage(text);
+                          },
+                          controller: TextEditingController(text: chatProvider.currentMessage),
                         ),
                       ),
                       IconButton(
                         icon: Icon(Icons.send),
                         onPressed: () {
-                          // Mesaj gönderme işlemi
-                          print('Send message');
+                          chatProvider.sendMessage();
                         },
                       ),
                     ],

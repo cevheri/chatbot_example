@@ -10,11 +10,12 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_bloc:
+#  flutter_bloc:
   http:
   equatable:
-  flutter_appauth:
+#  flutter_appauth:
   get:
+  provider:
 
 dev_dependencies:
   flutter_test:

@@ -1,3 +1,5 @@
+import 'package:dnext_chatbot_3/constants/app_session.dart';
+import 'package:dnext_chatbot_3/models/user_info.dart';
 import 'package:dnext_chatbot_3/repositories/auth_repository.dart';
 import 'package:dnext_chatbot_3/screens/chat_screen.dart';
 import 'package:flutter/material.dart';
@@ -32,8 +34,15 @@ class _LoginScreenState extends State<LoginScreen> {
       _token = token;
       print('Token: $_token');
       _isLoading = false;
-      Get.off(() => ChatScreen(token: _token!));
+      AppSession.token = token;
+      Get.off(() => ChatScreen());
     });
+  }
+
+  Future<void> _loadUserInformation() async {
+    UserInfo userInformation = await _authRepository.getAccount();
+    AppSession.username = userInformation.preferredUsername;
+    print('User Information: $userInformation');
   }
 
   @override
