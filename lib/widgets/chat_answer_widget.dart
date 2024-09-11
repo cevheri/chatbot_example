@@ -8,7 +8,8 @@ class ChatAnswerWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ChatSession chatSession = Get.find<ChatSession>();
+    final ChatSession chatSession = Get.put(ChatSession());
+    final AnswerApiDataControl controller = Get.put(AnswerApiDataControl());
 
     return Obx(() {
       if (chatSession.questionMessageScreen.value.isEmpty) {
@@ -18,7 +19,6 @@ class ChatAnswerWidget extends StatelessWidget {
           ),
         );
       }
-
       return Expanded(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -31,24 +31,42 @@ class ChatAnswerWidget extends StatelessWidget {
                 child: ListTile(
                   title: const Text('Chatbot'),
                   subtitle: Obx(
-                    () => SelectableText('Answered at ${chatSession.questionMessageScreen.value}'),
+                    () => SelectableText('Answered at ${chatSession.questionMessageScreen}'),
                   ),
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(0, 0, 50, 0),
-              child: Card(
-                elevation: 10,
-                color: Colors.blueGrey.shade200,
-                child: ListTile(
-                  title: const Text('Chatbot'),
-                  subtitle: Obx(
-                    () => SelectableText('Answer message: ${chatSession.answer.value.toString()}'),
-                  ),
-                ),
-              ),
-            ),
+            Obx(() {
+              switch (controller.state.value) {
+                case AnswerApiStateControl.loading:
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                case AnswerApiStateControl.error:
+                  return Center(
+                    child: Text('An error occurred!'),
+                  );
+                case AnswerApiStateControl.success:
+                  return Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 0, 50, 0),
+                    child: Card(
+                      elevation: 10,
+                      color: Colors.blueGrey.shade200,
+                      child: ListTile(
+                        title: const Text('Chatbot'),
+                        subtitle: Obx(
+                          () => SelectableText('Answer message: ${controller.answer.value.toString()}'),
+                        ),
+                      ),
+                    ),
+                  );
+                case AnswerApiStateControl.initial:
+                default:
+                  return Center(
+                    child: Text('No data available.'),
+                  );
+              }
+            }),
           ],
         ),
       );

@@ -30,6 +30,8 @@ class SendButtonWidget extends StatelessWidget {
               ChatRepository().sendMessage(message: messageController.text);
               final ChatSession chatSession = Get.find<ChatSession>();
               chatSession.questionMessageScreen.value = messageController.text;
+              final AnswerApiDataControl controller = Get.put(AnswerApiDataControl());
+              controller.fetchData();
             },
           ),
         ],
