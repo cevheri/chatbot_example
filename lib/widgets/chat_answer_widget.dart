@@ -29,7 +29,7 @@ class ChatAnswerWidget extends StatelessWidget {
                 elevation: 10,
                 color: Colors.blueGrey.shade200,
                 child: ListTile(
-                  title: const Text('Chatbot'),
+                  title: const Text('User question'),
                   subtitle: Obx(
                     () => SelectableText('Answered at ${chatSession.questionMessageScreen}'),
                   ),
