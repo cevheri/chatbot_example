@@ -1,10 +1,11 @@
-
-import 'package:dnext_chatbot_3/models/chat_question.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../models/chat_question.dart';
 
-class ChatSession {
-  final message = TextEditingController().obs;
+class ChatSession extends GetxController {
   final chatHistory = <ChatQuestion>[].obs;
-  final answer = TextEditingController().obs;
+  final answer = "".obs;
+
+  var answerMessageScreen = "".obs;
+  var questionMessageScreen = "".obs;
 }
+

@@ -11,7 +11,7 @@ class AppRoute {
     return [
       GetPage(name: '/', page: () =>  LoginScreen(), transition: Transition.cupertino),
       GetPage(name: '/login', page: () =>  LoginScreen(), transition: Transition.cupertino),
-      GetPage(name: '/chat', page: () => const ChatScreen(), transition: Transition.cupertino),
+      GetPage(name: '/chat', page: () =>  ChatScreen(), transition: Transition.cupertino),
     ];
   }
 
