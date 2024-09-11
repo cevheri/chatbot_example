@@ -13,23 +13,17 @@ class ChatSession extends GetxController {
   var state = AnswerApiStateControl.initial.obs;
 }
 
-
-
-
-
-
-
-
-
 //TODO ...
 class AnswerApiDataControl extends GetxController {
+  final ChatSession chatSession = Get.put(ChatSession());
+
   var answer = ''.obs;
   var state = AnswerApiStateControl.initial.obs;
 
   Future<void> fetchData() async {
     state.value = AnswerApiStateControl.loading;
     try {
-      answer.value = await ChatRepository().mockGetMessageService(message: "mock data");
+      answer.value = await ChatRepository().mockGetMessageService(sendMessage: chatSession.questionMessageScreen.toString());
       state.value = AnswerApiStateControl.success;
     } catch (e) {
       state.value = AnswerApiStateControl.error;
